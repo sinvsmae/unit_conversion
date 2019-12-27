@@ -1,7 +1,8 @@
 # LOG
-# -V1.1b: Modify USC_length_units. Use option2,3 to find k through v.
-# -V1.1a: popup menu. Cons: a. only works for length. has to modularify the category-based process.
-# -V1: three inputs(). Cons:  a. has to input the exact unit.
+# V1.1c: make every category work.
+# V1.1b: Modify USC_length_units. Use option2,3 to find k through v.
+# V1.1a: popup menu. Cons: a. only works for length. has to modularify the category-based process.
+# V1: three inputs(). Cons:  a. has to input the exact unit.
 
 # TODO Treat an entry and ini_unit as a single object.
 # TODO Make json file
@@ -33,7 +34,9 @@ def convert_unit(entry: float, ini_unit: str, res_unit: str, category: str) -> f
             res_default = USC2SI_area_convert(entry, ini_unit)
         elif category == 'volume':
             res_default = USC2SI_volume_convert(entry, ini_unit)
-        else:                    # category is 'weight'
+        elif category == 'cooking':
+            res_default = USC2SI_cooking_convert(entry, ini_unit)
+        else:                    # category == 'weight'
             res_default = USC2SI_weight_convert(entry, ini_unit)
     # TODO visitor DP? according to different category, use different convert func.
 
@@ -71,6 +74,7 @@ USC2SI_volume_table = {
 }
 
 # Fluid & Dry: -> gallon
+# volume
 USC2USC_cooking_table = {
     'teaspoon(tsp)': 1/(3 * 2 * 8 * 2 * 2 * 4),     # tsp * Tbsp * oz * cp * pt * qt
     'tablespoon(Tbsp)': 1/(2 * 8 * 2 * 2 * 4),      # Tbsp * oz * cp * pt * qt
@@ -123,6 +127,7 @@ def get_key(d, value) -> str:
     for k, v in d.items():
         if v == value:
             return k
+    # return k for k,v in d.items() if v == value       # doesn't work, need [] or other comprehension
 
 
 USC_length_units2 = [get_key(USC2USC_length_table, v)
@@ -130,17 +135,29 @@ USC_length_units2 = [get_key(USC2USC_length_table, v)
 
 
 # OPTION 3: reverse dict
-d2 = {v: k for k, v in d.items()}
-k = d2[v]
-
 USC_length_units3 = [{v: k for k, v in USC2USC_length_table.items()}[v]
                      for v in sorted(USC2USC_length_table.values())]
 
+USC_area_units = [{v: k for k, v in USC2SI_area_table.items()}[v]
+                  for v in sorted(USC2SI_area_table.values())]
+
+USC_volume_units = [{v: k for k, v in USC2USC_volume_table.items()}[v]
+                    for v in sorted(USC2USC_volume_table.values())]
+
+USC_cooking_units = [{v: k for k, v in USC2USC_cooking_table.items()}[v]
+                     for v in sorted(USC2USC_cooking_table.values())]
+
+USC_weight_units = [{v: k for k, v in USC2USC_weight_table.items()}[v]
+                    for v in sorted(USC2USC_weight_table.values())]
+
 
 def SI2SI_convert(res_unit: str, value: float) -> int:
-    print(value)
     if len(res_unit) == 2:
         return value * SI_prefix[res_unit[0]]
+    elif res_unit.startswith('sq') and len(res_unit) == 5:
+        return value * SI_prefix[res_unit[-2]] ** 2
+    elif res_unit.startswith('cu') and len(res_unit) == 5:
+        return value * SI_prefix[res_unit[-2]] ** 3
     else:
         return value
 
@@ -157,7 +174,12 @@ def USC2SI_area_convert(entry: float, ini_unit: str) -> float:      # default_un
 
 # -> L
 def USC2SI_volume_convert(entry: float, ini_unit: str) -> float:    # default_unit = L
-    return entry * USC2USC_volume_table[ini_unit] * GAL2L
+    return entry * USC2SI_volume_table[ini_unit]
+
+
+# -> L
+def USC2SI_cooking_convert(entry: float, ini_unit: str) -> float:
+    return entry * USC2USC_cooking_table[ini_unit] * GAL2L
 
 
 # -> g
@@ -183,8 +205,29 @@ if __name__ == '__main__':
     if category == 'length':
         for i in enumerate(USC_length_units):
             print('{}: {}'.format(i[0], i[1]))
-    ini_unit = USC_length_units[int(input())]
+        ini_unit = USC_length_units[int(input())]
+    elif category == 'area':
+        for i in enumerate(USC_area_units):
+            print('{}: {}'.format(i[0], i[1]))
+        ini_unit = USC_area_units[int(input())]
+    elif category == 'volume':
+        for i in enumerate(USC_volume_units):
+            print('{}: {}'.format(i[0], i[1]))
+        ini_unit = USC_volume_units[int(input())]
+    elif category == 'cooking':
+        for i in enumerate(USC_cooking_units):
+            print('{}: {}'.format(i[0], i[1]))
+        ini_unit = USC_cooking_units[int(input())]
+    elif category == 'weight':
+        for i in enumerate(USC_weight_units):
+            print('{}: {}'.format(i[0], i[1]))
+        ini_unit = USC_weight_units[int(input())]
+    else:           # category == 'temperature'
+        print('0: F')
+        ini_unit = 'F'      # TODO try/except to deal with wrong index
+
     print('Please input the unit to be converted into:')
     res_unit = input()
     res = convert_unit(entry, ini_unit, res_unit, category)
     print('%.3f' % res)             # TODO print .3f only when longer than .3f
+    # TODO loop the process
