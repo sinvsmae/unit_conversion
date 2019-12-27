@@ -1,7 +1,8 @@
 # LOG
+# V1.1d: hint for res_unit.
 # V1.1c: make every category work.
 # V1.1b: Modify USC_length_units. Use option2,3 to find k through v.
-# V1.1a: popup menu. Cons: a. only works for length. has to modularify the category-based process.
+# V1.1a: popup menu. Cons: a. only works for length. has to modularize the category-based process.
 # V1: three inputs(). Cons:  a. has to input the exact unit.
 
 # TODO Treat an entry and ini_unit as a single object.
@@ -103,6 +104,7 @@ USC2USC_weight_table = {
 SI_base_unit = {'length': 'm',
                 'area': 'sq m',             # TODO this shall be treated differently
                 'volume': 'L',
+                'cooking': 'L',
                 'weight': 'g',
                 'temp': 'C',
                 }
@@ -149,6 +151,14 @@ USC_cooking_units = [{v: k for k, v in USC2USC_cooking_table.items()}[v]
 
 USC_weight_units = [{v: k for k, v in USC2USC_weight_table.items()}[v]
                     for v in sorted(USC2USC_weight_table.values())]
+
+
+# TODO modularize and generate automatically
+SI_length_units = []
+SI_area_units = []
+SI_volume_units = []
+SI_cooking_units = []
+SI_weight_units = []
 
 
 def SI2SI_convert(res_unit: str, value: float) -> int:
@@ -227,6 +237,7 @@ if __name__ == '__main__':
         ini_unit = 'F'      # TODO try/except to deal with wrong index
 
     print('Please input the unit to be converted into:')
+    print('Hint: The SI base unit for {} is {}'.format(category, SI_base_unit[category]))
     res_unit = input()
     res = convert_unit(entry, ini_unit, res_unit, category)
     print('%.3f' % res)             # TODO print .3f only when longer than .3f
