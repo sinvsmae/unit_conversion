@@ -1,4 +1,5 @@
 # LOG
+# -V1.1b: Modify USC_length_units. Use option2,3 to find k through v.
 # -V1.1a: popup menu. Cons: a. only works for length. has to modularify the category-based process.
 # -V1: three inputs(). Cons:  a. has to input the exact unit.
 
@@ -113,8 +114,27 @@ category_table = ['temperature', 'length', 'area', 'volume', 'cooking', 'weight'
 
 # get key list sorted by value
 # OPTION 1: key(),values(),index()
-USC_length = [list(USC2USC_length_table.keys())[list(USC2USC_length_table.values()).index(v)]
-              for v in sorted(USC2USC_length_table.values())]
+USC_length_units = [list(USC2USC_length_table.keys())[list(USC2USC_length_table.values()).index(v)]
+                    for v in sorted(USC2USC_length_table.values())]
+
+
+# OPTION 2: def get_key()
+def get_key(d, value) -> str:
+    for k, v in d.items():
+        if v == value:
+            return k
+
+
+USC_length_units2 = [get_key(USC2USC_length_table, v)
+                     for v in sorted(USC2USC_length_table.values())]
+
+
+# OPTION 3: reverse dict
+d2 = {v: k for k, v in d.items()}
+k = d2[v]
+
+USC_length_units3 = [{v: k for k, v in USC2USC_length_table.items()}[v]
+                     for v in sorted(USC2USC_length_table.values())]
 
 
 def SI2SI_convert(res_unit: str, value: float) -> int:
@@ -161,9 +181,9 @@ if __name__ == '__main__':
     # Lots of if smt is the dumbest way to do that.
     # TODO Change to a category based process, not if smt.
     if category == 'length':
-        for i in enumerate(USC_length):
+        for i in enumerate(USC_length_units):
             print('{}: {}'.format(i[0], i[1]))
-    ini_unit = USC_length[int(input())]
+    ini_unit = USC_length_units[int(input())]
     print('Please input the unit to be converted into:')
     res_unit = input()
     res = convert_unit(entry, ini_unit, res_unit, category)
