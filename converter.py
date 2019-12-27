@@ -1,4 +1,4 @@
-# Todo: treat an entry and ini_unit as a single object.
+# TODO Treat an entry and ini_unit as a single object.
 
 
 # ref: https://en.wikipedia.org/wiki/United_States_customary_units
@@ -27,7 +27,7 @@ def convert_unit(entry: float, ini_unit: str, res_unit: str, category: str) -> f
             res_default = USC2SI_volume_convert(entry, ini_unit)
         else:                    # category is 'weight'
             res_default = USC2SI_weight_convert(entry, ini_unit)
-    # Todo: visitor DP? according to different category, use different convert func.
+    # TODO visitor DP? according to different category, use different convert func.
 
     return SI2SI_convert(res_unit=res_unit, entry=res_default)
 
@@ -89,7 +89,7 @@ USC2USC_weight_table = {
 
 
 SI_base_unit = {'length': 'm',
-                'area': 'sq m',             # Todo: this shall be treated differently
+                'area': 'sq m',             # TODO this shall be treated differently
                 'volume': 'L',
                 'weight': 'g',
                 'temp': 'C',
