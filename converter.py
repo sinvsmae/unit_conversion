@@ -1,10 +1,17 @@
+# LOG
+# -V1.1a: popup menu. Cons: a. only works for length. has to modularify the category-based process.
+# -V1: three inputs(). Cons:  a. has to input the exact unit.
+
 # TODO Treat an entry and ini_unit as a single object.
+# TODO Make json file
+# TODO Make a framework for dealing with different category.
 
 
 # ref: https://en.wikipedia.org/wiki/United_States_customary_units
 # Exactly defined in 1959
 LB2G = 453.59237
 YD2M = 0.9144
+
 
 # The fluid ounce derives its name originally from being the volume of one ounce avoirdupois of water
 # But in the US it is defined as ​1⁄128 of a US gallon.
@@ -16,20 +23,20 @@ def convert_unit(entry: float, ini_unit: str, res_unit: str, category: str) -> f
     """Convert the ini_unit into res_unit."""
     # So far, only deal with special case: usc2si, no usc2usc/si2usc
     # OPTION 1: lots of if smt
-    if category is 'temperature':
+    if category == 'temperature':
         return USC2SI_temp_convert(entry)
     else:
-        if category is 'length':
+        if category == 'length':
             res_default = USC2SI_length_convert(entry, ini_unit)
-        elif category is 'area':
+        elif category == 'area':
             res_default = USC2SI_area_convert(entry, ini_unit)
-        elif category is 'volume':
+        elif category == 'volume':
             res_default = USC2SI_volume_convert(entry, ini_unit)
         else:                    # category is 'weight'
             res_default = USC2SI_weight_convert(entry, ini_unit)
     # TODO visitor DP? according to different category, use different convert func.
 
-    return SI2SI_convert(res_unit=res_unit, entry=res_default)
+    return SI2SI_convert(res_unit=res_unit, value=res_default)
 
 
 # -> yard
@@ -95,10 +102,10 @@ SI_base_unit = {'length': 'm',
                 'temp': 'C',
                 }
 
-SI_prefix = {'k': 10**3,
-             'd': 10**(-1),
-             'c': 10**(-2),
-             'm': 10**(-3),
+SI_prefix = {'k': 0.001,
+             'd': 10,
+             'c': 100,
+             'm': 1000,
              }
 
 
@@ -106,21 +113,16 @@ category_table = ['temperature', 'length', 'area', 'volume', 'cooking', 'weight'
 
 # get key list sorted by value
 # OPTION 1: key(),values(),index()
-
-for v in sorted(d.values()):
-    k = list(USC2USC_length_table.keys())[list(USC2USC_length_table.values()).index(v)]
-    print(k)
+USC_length = [list(USC2USC_length_table.keys())[list(USC2USC_length_table.values()).index(v)]
+              for v in sorted(USC2USC_length_table.values())]
 
 
-USC_length = [k ]
-USC_area = ['sq ft, ']
-
-
-def SI2SI_convert(res_unit: str, entry: float) -> int:
+def SI2SI_convert(res_unit: str, value: float) -> int:
+    print(value)
     if len(res_unit) == 2:
-        return SI_base_unit[res_unit] * float
+        return value * SI_prefix[res_unit[0]]
     else:
-        return entry
+        return value
 
 
 # -> m
@@ -149,13 +151,20 @@ def USC2SI_temp_convert(entry: float) -> float:                     # default_un
 
 
 if __name__ == '__main__':
+    print('Please input the value to convert:')
     entry = float(input())
-    print('Choose the number representing the following categories:\n')
+    print('Choose the number representing the following categories:')
     for i in enumerate(category_table):
         print('{}: {}'.format(i[0], i[1]))
-    category = category_table[input()]
-    print('Choose the number representing the following units:')
-    print()
+    category = category_table[int(input())]
+    print('Choose the number representing the following units of the entry value:')
+    # Lots of if smt is the dumbest way to do that.
+    # TODO Change to a category based process, not if smt.
+    if category == 'length':
+        for i in enumerate(USC_length):
+            print('{}: {}'.format(i[0], i[1]))
+    ini_unit = USC_length[int(input())]
+    print('Please input the unit to be converted into:')
     res_unit = input()
-    res = convert_unit(entry, ini_unit, res_unit)
-    print('%.3f' % res)
+    res = convert_unit(entry, ini_unit, res_unit, category)
+    print('%.3f' % res)             # TODO print .3f only when longer than .3f
