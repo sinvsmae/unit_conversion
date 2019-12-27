@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block body %}
+<h2> {{ the_title }}</h2>
+<form method="POST" action="/input">
+<table>
+    <tr>
+        <td><input name="input" type="TEXT" width="60"></td>
+        <td><input name="unit" type="radio"></td>
+        <td>oz</td>
+    </tr>
+</table>
+    <p><input value="Convert!" type="SUBMIT"></p>
+<table>
+    <tr>
+        <th>Weight</th>
+        <th>Length</th>
+        <th>Area</th>
+        <th>Temperature</th>
+        <td></td>
+    </tr>
+    <tr>
+        <td>1 oz ≈ 28.3 g</td>
+        <td>1 inch = 2.54cm</td>
+        <td>1 sq foot ≈ 0.09 sq meter</td>
+        <td>32 °F = 0 °C</td>
+    </tr>
+    <tr>
+        <td>1 lb ≈ 453.6 g</td>
+        <td>1 foot = 30.48 cm</td>
+        <td>1 acre ≈ 4046.9 sq meter</td>
+        <td>(32°F − 32) × 5/9 = 0°C</td>
+    </tr>
+    <tr>
+        <td>1 tbsp = 3 tsp</td>
+        <td>1 mile ≈ 1.6 km</td>
+    </tr>
+    <tr>
+    </tr>
+        <td>1 cup = 16 tbsp</td>
+        <td>1 yard ≈ 0.9144 m</td>
+    <tr>
+        <td>1 pint = 2 cup</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>1 quart = 2 pint</td>
+    </tr>
+    <tr>
+        <td>1 gallon = 4 quart</td>
+    </tr>
+
+</table>
+
+</form>
+
+{% endblock %}
