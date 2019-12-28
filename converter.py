@@ -240,5 +240,5 @@ if __name__ == '__main__':
     print('Hint: The SI base unit for {} is {}'.format(category, SI_base_unit[category]))
     res_unit = input()
     res = convert_unit(entry, ini_unit, res_unit, category)
-    print('%.3f' % res)             # TODO print .3f only when longer than .3f
+    print('%.3f' % res)             # TODO print .3f only when longer than .3f, and manage significant digits
     # TODO loop the process
