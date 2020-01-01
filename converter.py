@@ -44,6 +44,15 @@ def convert_unit(entry: float, ini_unit: str, res_unit: str, category: str) -> f
     return SI2SI_convert(res_unit=res_unit, value=res_default)
 
 
+class SIUnit:
+    pass
+
+
+class USCUnit:
+    pass
+
+
+
 # -> yard
 USC2USC_length_table = {
     'inch(in)': 1/(12*3),       # in * ft

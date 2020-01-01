@@ -1,0 +1,36 @@
+{
+  "length": [
+    {
+      "id": "inch",
+      "name": [ "in", "inch", "\"" ],
+      "system": "USC",
+      "derived": true,
+      "toBase": "1/(12*3)",
+      "range": ["0", null]
+    },
+    {
+      "id": "yard",
+      "name": ["yard", "yd"],
+      "system": "USC",
+      "derived": false,
+      "toBase": "1",
+      "range": ["0", null]
+    },
+    {
+      "id": "meter",
+      "name": [ "meter", "m" ],
+      "system": "SI",
+      "derived": false,
+      "range": ["0", null]
+    }
+  ],
+  "volume": [
+    {
+      "id": "cubic inches",
+      "name": [ "cubic inches", "in^3", "cu in", "in3"],
+      "system": "USC",
+      "derived": true,
+      "range": ["0", null]
+    }
+  ]
+}
