@@ -2,7 +2,13 @@
   "length": [
     {
       "id": "inch",
-      "name": [ "in", "inch", "\"" ],
+      "name": {
+        "fullName": "inch",
+        "alias": [
+          "in",
+          "\""
+        ]
+      },
       "system": "USC",
       "derived": true,
       "toBase": "1/(12*3)",

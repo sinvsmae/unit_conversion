@@ -1,14 +1,74 @@
+# LOG
+# V2.1b: create a dict. k: category, v: unitObjs.
+# V2.1: unit object, generic traverse get function
+# V2: check the category
+
+# API 2.0:
+# mere input, not GUI, using BNF to define grammar
+# data driven program
+# parse json once, and create object.
 # API:
 # textbox: user can input all the acceptable unit representations.
 # no checkbox.
 # if non-compatible units, raise error
 # significance number
 
+
 import json
 
 with open('units.json', 'r') as f:
     unitDB = json.load(f)     # unitDB is dict
     # TODO handle duplicate key, otherwise probably will raise keyError
+
+
+def unitDB_fabricate(unitDB: dict):
+    """return a list of categoryObj"""
+    categoryObjList = []       # item: category obj
+    for category in unitDB.keys():
+        categoryObjList.append(Category(name=category))
+        categoryValue = unitDB[category]
+        unitObjList = []        # item: unit obj in the same category
+        for unitDoc in categoryValue:
+            unitObjList.append(Unit(d=unitDoc))
+
+    return categoryObjList
+
+
+def unitDB_fabricate2(unitDB: dict) -> dict:
+    """return a dict. k: category, v: list of unitObj"""
+    unitObjDict = {}
+    for category in unitDB.keys():
+        unitObjDict[category] = unitObj_fabricate(categoryValue= unitDB[category])
+
+    return unitObjDict
+
+def unitObj_fabricate(categoryValue: list):
+    unitObjList = []
+    for unitDoc in categoryValue:
+        unitObjList.append(Unit(d=unitDoc))
+
+    return unitObjList
+
+
+class Category:
+    """a class composed of an array of unitObjs."""
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return self.name
+
+
+class Unit:
+    """a class that has all the k:v as attr."""
+    def __init__(self, d: dict):
+        self.__dict__ = d       # that is such a cheating method! no mess with lambda/__getattr__ at all.
+        self.name = d['id']
+        print(self.__dict__)
+
+    def __repr__(self):
+        return self.name
+
 
 unitDB_category = set(unitDB.keys())
 # ?????
@@ -44,9 +104,9 @@ def get_units_names_in_category(unitDB: dict) -> dict:
     return unitNameDB
 
 
-def check_type(ini_unit: str) -> str:
+def check_system(ini_unit: str) -> str:
     """return the type of the str. USC/SI.."""
-    for units_array in unitDB.values():
+    for category in unitDB.keys():
         if
 
 
