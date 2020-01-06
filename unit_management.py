@@ -1,4 +1,7 @@
 # LOG
+# v2.3: in units.json, unitList -> dict
+# v2.2e: handle range
+# v2.2d: to_categoryObjList -> to_categoryObjDict
 # V2.1c: handle nested dict.
 # V2.1b: create a dict. k: category, v: unitObjs.
 # V2.1a: unit object, generic traverse get function
@@ -17,10 +20,6 @@
 
 import json
 
-with open('units.json', 'r') as f:
-    unitDB = json.load(f)     # unitDB is dict
-    # TODO handle duplicate key, otherwise probably will raise keyError
-
 
 def to_categoryObjList(d: dict) -> list:
     """return a list of categoryObj.
@@ -35,10 +34,12 @@ def to_categoryObjList(d: dict) -> list:
 
 
 # compared to list, return dict is more intuitive and easy to access later.
+# set is not ok cuz no access via idx or key.
 # k: categoryName, v: obj
 def to_categoryObjDict(d: dict) -> dict:
     """return a dict of categoryObj. k: category name, v: unitObjList"""
-    pass
+    return {category: Category(category, unitDocList)
+            for category, unitDocList in d.items()}
 
 
 def to_unitObjList(l: list) -> list:
@@ -49,30 +50,42 @@ def to_unitObjList(l: list) -> list:
     return unitObjList
 
 
+def to_unitObjDict(l:list) -> dict:
+    """given an array of documents, return a dict of unitObj.
+    k: unit_name; v: unitObj
+    """
+    return {unitDoc['id']: Unit(unitDoc) for unitDoc in l}
+
+
 class Category:
-    def __init__(self, name: str, unitObjList: list):
+    def __init__(self, name: str, unitDocList: list):
         self.name = name
-        self.unitObjList = unitObjList
+        self.unitObjDict = to_unitObjDict(unitDocList)
 
     def __repr__(self):
-        return self.name
+        return self.name.capitalize()
 
 
 class Unit:
-    def __init__(self, d: dict):
-        self.name = d['id']
-        self.traverse_dict(d)
+    def __init__(self, unitDoc: dict):
+        self.id = unitDoc['id']
+        self.traverse_dict(unitDoc)
 
-    def __repr__(self):
-        return self.name
+    # def __repr__(self):
+    #     return self.name.capitalize()
 
-    def traverse_dict(self, d: dict):
-        for key, value in d.items():
+    def traverse_dict(self, unitDoc: dict):
+        for key, value in unitDoc.items():
             # if hasattr __dict__
-            if hasattr(value, "__dict__"):
+            print(key, value)
+            if isinstance(value, dict):
+                self.__dict__[key] = value
                 self.traverse_dict(value)
             else:
                 self.__dict__[key] = value
+
+    def __repr__(self):
+        return self.id.capitalize()
 
 
 unitDB_category = set(unitDB.keys())
@@ -113,12 +126,6 @@ def check_system(ini_unit: str) -> str:
     """return the type of the str. USC/SI.."""
     for category in unitDB.keys():
         if
-
-
-
-
-
-
 
 
 
