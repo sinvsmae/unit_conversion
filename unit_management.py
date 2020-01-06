@@ -58,18 +58,19 @@ def to_unitObjDict(l:list) -> dict:
 
 
 class Category:
-    def __init__(self, name: str, unitDocList: list):
-        self.name = name
+    def __init__(self, id: str, unitDocList: list):
+        self.id = id
         self.unitObjDict = to_unitObjDict(unitDocList)
 
     def __repr__(self):
-        return self.name.capitalize()
+        return self.id.capitalize()
 
 
 class Unit:
     def __init__(self, unitDoc: dict):
         self.id = unitDoc['id']
         self.traverse_dict(unitDoc)
+        self.min, self.max = self.range[0], self.range[-1]
 
     # def __repr__(self):
     #     return self.name.capitalize()
