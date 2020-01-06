@@ -1,6 +1,7 @@
 # LOG
+# V2.1c: handle nested dict.
 # V2.1b: create a dict. k: category, v: unitObjs.
-# V2.1: unit object, generic traverse get function
+# V2.1a: unit object, generic traverse get function
 # V2: check the category
 
 # API 2.0:
@@ -21,53 +22,57 @@ with open('units.json', 'r') as f:
     # TODO handle duplicate key, otherwise probably will raise keyError
 
 
-def unitDB_fabricate(unitDB: dict):
-    """return a list of categoryObj"""
-    categoryObjList = []       # item: category obj
-    for category in unitDB.keys():
-        categoryObjList.append(Category(name=category))
-        categoryValue = unitDB[category]
-        unitObjList = []        # item: unit obj in the same category
-        for unitDoc in categoryValue:
-            unitObjList.append(Unit(d=unitDoc))
+def to_categoryObjList(d: dict) -> list:
+    """return a list of categoryObj.
+    obj.attr = unitObjList
+    """
+    categoryObjList = []
+    for category, unitDocList in d.items():
+        unitObjList = to_unitObjList(unitDocList)
+        categoryObjList.append(Category(category, unitObjList))
 
     return categoryObjList
 
 
-def unitDB_fabricate2(unitDB: dict) -> dict:
-    """return a dict. k: category, v: list of unitObj"""
-    unitObjDict = {}
-    for category in unitDB.keys():
-        unitObjDict[category] = unitObj_fabricate(categoryValue= unitDB[category])
+# compared to list, return dict is more intuitive and easy to access later.
+# k: categoryName, v: obj
+def to_categoryObjDict(d: dict) -> dict:
+    """return a dict of categoryObj. k: category name, v: unitObjList"""
+    pass
 
-    return unitObjDict
 
-def unitObj_fabricate(categoryValue: list):
+def to_unitObjList(l: list) -> list:
+    """given an array of documents, return a list of unitObj"""
     unitObjList = []
-    for unitDoc in categoryValue:
-        unitObjList.append(Unit(d=unitDoc))
-
+    for unitDoc in l:
+        unitObjList.append(Unit(unitDoc))
     return unitObjList
 
 
 class Category:
-    """a class composed of an array of unitObjs."""
-    def __init__(self, name):
+    def __init__(self, name: str, unitObjList: list):
         self.name = name
+        self.unitObjList = unitObjList
 
     def __repr__(self):
         return self.name
 
 
 class Unit:
-    """a class that has all the k:v as attr."""
     def __init__(self, d: dict):
-        self.__dict__ = d       # that is such a cheating method! no mess with lambda/__getattr__ at all.
         self.name = d['id']
-        print(self.__dict__)
+        self.traverse_dict(d)
 
     def __repr__(self):
         return self.name
+
+    def traverse_dict(self, d: dict):
+        for key, value in d.items():
+            # if hasattr __dict__
+            if hasattr(value, "__dict__"):
+                self.traverse_dict(value)
+            else:
+                self.__dict__[key] = value
 
 
 unitDB_category = set(unitDB.keys())
