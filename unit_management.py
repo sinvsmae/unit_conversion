@@ -1,4 +1,5 @@
 # LOG
+# v2.3a: handle unitDict
 # v2.3: in units.json, unitList -> dict
 # v2.2e: handle range
 # v2.2d: to_categoryObjList -> to_categoryObjDict
@@ -11,6 +12,7 @@
 # mere input, not GUI, using BNF to define grammar
 # data driven program
 # parse json once, and create object.
+
 # API:
 # textbox: user can input all the acceptable unit representations.
 # no checkbox.
@@ -21,46 +23,24 @@
 import json
 
 
-def to_categoryObjList(d: dict) -> list:
-    """return a list of categoryObj.
-    obj.attr = unitObjList
-    """
-    categoryObjList = []
-    for category, unitDocList in d.items():
-        unitObjList = to_unitObjList(unitDocList)
-        categoryObjList.append(Category(category, unitObjList))
-
-    return categoryObjList
-
-
-# compared to list, return dict is more intuitive and easy to access later.
-# set is not ok cuz no access via idx or key.
-# k: categoryName, v: obj
 def to_categoryObjDict(d: dict) -> dict:
     """return a dict of categoryObj. k: category name, v: unitObjList"""
-    return {category: Category(category, unitDocList)
-            for category, unitDocList in d.items()}
+    return {category: Category(category, unitDocDict)
+            for category, unitDocDict in d.items()}
 
 
-def to_unitObjList(l: list) -> list:
-    """given an array of documents, return a list of unitObj"""
-    unitObjList = []
-    for unitDoc in l:
-        unitObjList.append(Unit(unitDoc))
-    return unitObjList
-
-
-def to_unitObjDict(l:list) -> dict:
-    """given an array of documents, return a dict of unitObj.
+def to_unitObjDict(d: dict) -> dict:
+    """given a dict of documents, return a dict of unitObj.
     k: unit_name; v: unitObj
     """
-    return {unitDoc['id']: Unit(unitDoc) for unitDoc in l}
+    return {unit_name: Unit(unitDoc)
+            for unit_name, unitDoc in d.items()}
 
 
 class Category:
-    def __init__(self, id: str, unitDocList: list):
-        self.id = id
-        self.unitObjDict = to_unitObjDict(unitDocList)
+    def __init__(self, name: str, unitDocDict: dict):
+        self.id = name
+        self.unitObjDict = to_unitObjDict(unitDocDict)
 
     def __repr__(self):
         return self.id.capitalize()
@@ -72,12 +52,8 @@ class Unit:
         self.traverse_dict(unitDoc)
         self.min, self.max = self.range[0], self.range[-1]
 
-    # def __repr__(self):
-    #     return self.name.capitalize()
-
     def traverse_dict(self, unitDoc: dict):
         for key, value in unitDoc.items():
-            # if hasattr __dict__
             print(key, value)
             if isinstance(value, dict):
                 self.__dict__[key] = value
@@ -89,8 +65,6 @@ class Unit:
         return self.id.capitalize()
 
 
-unitDB_category = set(unitDB.keys())
-# ?????
 # set is un-ordered, so not sequence, but does it has __inter__ or __next__
 # I don't think set is necessary, because json file shall not allow duplicate key.
 # However, set is more intuitive to describe.
