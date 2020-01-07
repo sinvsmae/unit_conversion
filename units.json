@@ -1,5 +1,7 @@
 {
-  "length": [
+  "length":
+  {
+    "inch":
     {
       "id": "inch",
       "name": {
@@ -14,6 +16,7 @@
       "toBase": "1/(12*3)",
       "range": ["0", null]
     },
+    "yard":
     {
       "id": "yard",
       "name": ["yard", "yd"],
@@ -22,6 +25,7 @@
       "toBase": "1",
       "range": ["0", null]
     },
+    "meter":
     {
       "id": "meter",
       "name": [ "meter", "m" ],
@@ -29,8 +33,10 @@
       "derived": false,
       "range": ["0", null]
     }
-  ],
-  "volume": [
+  },
+  "volume":
+  {
+    "cubic inches":
     {
       "id": "cubic inches",
       "name": [ "cubic inches", "in^3", "cu in", "in3"],
@@ -38,5 +44,5 @@
       "derived": true,
       "range": ["0", null]
     }
-  ]
+  }
 }
